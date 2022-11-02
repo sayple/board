@@ -119,7 +119,10 @@ int arraySetAt(LPARRAY lpArray, int nPos, const LPDATA lpValue)
     }
     
     //배열의 위치에 값을 기록한다.
+    free(lpArray->lpData[nPos]); ///////////////메이비 포인트
     lpArray->lpData[nPos] = lpValue;
+    
+    
     
     //자료 설정 성공 코드 리턴합니다
     return ERR_ARRAY_OK;
@@ -190,7 +193,7 @@ int arrayDestroy(LPARRAY lpArray)
     if(NULL != lpArray->lpData) {
         LPDATA Temp;
         Temp = lpArray->lpData;
-        lpArray->lpData++;
+        lpArray->lpData++;     ////////메이비 포인트
 		free(Temp);
     }
     

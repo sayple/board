@@ -21,17 +21,24 @@
 #include "cursorCon.h"
 #define CR '\012'
 #define BUFFER_SIZE 1024
-
+void clean_thread(void* arg);
 void* reader_thread(void *arg);
 void* writer_thread(void *arg);
 pthread_t tid1, tid2;
 struct termio tbuf, oldtbuf;
 int main(int argc, char *argv[])
 {
+	if(argc!=2){
+		fprintf(stderr, "Usage : ./client IP_ADDRESS\n");
+		return 1;
+	}
+
     if(ioctl(0, TCGETA, &tbuf) == -1) { // 현재터미널모드
         perror("ioctl");    exit(1);
     }
     oldtbuf=tbuf;
+	oldtbuf.c_lflag|=ECHO;
+	oldtbuf.c_lflag|=ICANON;
     tbuf.c_lflag &= ~ECHO;
     tbuf.c_lflag&=~ICANON;
    	tbuf.c_cc[VMIN] =1;
@@ -41,11 +48,6 @@ int main(int argc, char *argv[])
 	struct sockaddr_in board_addr;
 	int sin_size;
 	
-	if(argc!=2){
-		fprintf(stderr, "Usage : ./client IP_ADDRESS\n");
-		return 1;
-	}
-
 
 	if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
@@ -92,16 +94,21 @@ void* reader_thread(void *arg){
 			break;
 		}
 		buffer[n] = '\0';
+		pthread_cleanup_push(clean_thread,NULL);
 		if(strncmp(buffer,"PW : ",4)==0){
-		
 			if(ioctl(0, TCSETAF, &tbuf)==-1) {perror("ioctl"); exit(1);}
+			printf("%s", buffer);
+		}
+		else if(strncmp(buffer,"clear!!",7)==0){
+			if(ioctl(0, TCSETAF, &oldtbuf)==-1) {perror("ioctl"); exit(1);}
+			nclear();
 		}
 		else{
-			
 			if(ioctl(0, TCSETAF, &oldtbuf)==-1) {perror("ioctl"); exit(1);}
+			printf("%s", buffer);
 		}
-		printf("%s", buffer);
 		fflush(stdout);
+		pthread_cleanup_pop(0);
 	}
 	pthread_cancel(tid1);
 	pthread_exit(NULL);
@@ -125,4 +132,11 @@ void* writer_thread(void *arg){
 	}
 	pthread_cancel(tid2);
 	pthread_exit(NULL);	
+}
+void clean_thread(void* arg){
+	struct termio abs;
+	if(ioctl(0, TCGETA, &abs)==-1) {perror("ioctl"); exit(1);}
+	abs.c_lflag|=ECHO;
+	abs.c_lflag|=ICANON;
+	if(ioctl(0, TCSETAF, &abs)==-1) {perror("ioctl"); exit(1);}
 }

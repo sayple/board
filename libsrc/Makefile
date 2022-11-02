@@ -1,7 +1,7 @@
 INC = ../include
 CFLAGS = -fPIC -c  -g
 OBJS1 = menu.o profile.o input.o
-TARGET = libmenuS.so libhash.so libarray.so libinput.so
+TARGET = libmenuS.so libhash.so libarray.so libinput.so libload.so
 
 all: $(TARGET)
 
@@ -18,6 +18,7 @@ libarray.so: array.o
 
 libinput.so: input.o 
 	$(LD) -shared -o $@ $<
+	
 libload.so: load.o 
 	$(LD) -shared -o $@ $<
 .c.o:

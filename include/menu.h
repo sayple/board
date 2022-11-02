@@ -40,7 +40,7 @@ typedef struct {
 typedef MENU	*LPMENU;
 typedef const MENU *LPC_MENU;
 
-int menuCreate(LPMENU *lppRet);
+int menuCreate(LPMENU* lppRet,char* fileName);
 int menuRun(LPC_MENU lpMenu,int sd,LPARRAY userFullList);
 int menuDestroy(LPMENU lpMenu);
 

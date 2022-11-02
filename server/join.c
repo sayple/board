@@ -17,9 +17,13 @@
 #include "input.h"
 #include "array.h"
 #include "total.h"
+#include "load.h"
 
 int join(int sd,LPARRAY userFullList)
 {
+    pthread_mutex_t mutexid;
+    pthread_mutex_init(&mutexid,NULL);
+
     int n;
 	char buf[1024];
     LPUSER Temp = (LPUSER)malloc(sizeof(user));
@@ -90,10 +94,13 @@ int join(int sd,LPARRAY userFullList)
         }
 	    buf[n] = '\0';
 	    strcpy(Temp->tellNo,buf);
+    pthread_mutex_lock(&mutexid);
     arrayAdd(userFullList,(const LPDATA) Temp);
+    saveUserList(userFullList);
     sprintf(buf,"%s", "회원가입이 완료되셨습니다.\n\n");
     send(sd,buf,sizeof(buf),0);
     free(TempCheck);
+    pthread_mutex_unlock(&mutexid);
     
     return 0;
 }

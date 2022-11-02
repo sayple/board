@@ -14,7 +14,7 @@
 #include "reply.h"
 #include "userinfo.h"
 #include "total.h"
-int menuCreate(LPMENU* lppRet)
+int menuCreate(LPMENU* lppRet,char* fileName)
 {
     LPPROFILE lpProfile;
     LPMENU lpMenu;
@@ -26,7 +26,7 @@ int menuCreate(LPMENU* lppRet)
     const char *dlsym_error;
     
     //프로파일 메모리를 할당한다.    
-    nErr = profileCreate(&lpProfile, "menu_login.txt");
+    nErr = profileCreate(&lpProfile, fileName);
     if (ERR_PROFILE_OK != nErr) {
         return nErr;
     }

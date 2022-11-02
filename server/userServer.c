@@ -29,7 +29,7 @@ void* start_login(void* arg)
 	LPARRAY userFullList;
 	loadUserList(&userFullList);
 	int sd = *((int*) arg);	
-	menuCreate(&lpMenu);
+	menuCreate(&lpMenu,"menu_login.txt");
 	menuRun(lpMenu,sd,userFullList);
 	menuDestroy(lpMenu);
 	close(sd);

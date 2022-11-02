@@ -3,4 +3,8 @@
 #include "array.h"
 int login(int sd,LPARRAY userFullList);
 int join(int sd,LPARRAY userFullList);
+typedef struct{
+    int sendSd;
+    LPARRAY sendList;
+} sendFile, *LPSENDFILE;
 #endif

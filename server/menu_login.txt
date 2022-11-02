@@ -22,8 +22,8 @@ MENU_TITLE_2=[2] Join
 
 #########################################################
 #menu가 선택되었을 때 로드할 shared object 의 이름을 관리하는 부분 
-MENU_TITLE_SO_1=/home/mobis/PROJECT_USE/ch06/project_sample_test/server/liblogin.so
-MENU_TITLE_SO_2=/home/mobis/PROJECT_USE/ch06/project_sample_test/server/libjoin.so
+MENU_TITLE_SO_1=/home/mobis/ham/board/server/liblogin.so
+MENU_TITLE_SO_2=/home/mobis/ham/board/server/libjoin.so
 
 #########################################################
 #menu가 선택되었을 때 실제로 동작할 함수명을 관리한다 
