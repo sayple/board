@@ -1,0 +1,7 @@
+server/*.o
+server/lib*.so
+server/userServer
+client/client
+client/*.o
+libsrc/*.o
+libsrc/lib*.so
