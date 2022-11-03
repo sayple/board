@@ -26,8 +26,9 @@ void* startMenu(void* arg)
 	LPARRAY userFullList;
     int sd;
     sd = checkPre->sendSd;
+    send(sd, "clear!!", strlen("clear!!"), 0);
     userFullList = checkPre->sendList;
-	loadUserList(&userFullList);
+    usleep(5000);
 	menuCreate(&lpMenu,"menu_two.txt");
 	menuRun(lpMenu,sd,userFullList);
 	menuDestroy(lpMenu);
@@ -37,15 +38,21 @@ void* startMenu(void* arg)
 }
 int login(int sd,LPARRAY userFullList)
 {
+    loadUserList(&userFullList);
+    send(sd, "clear!!", strlen("clear!!"), 0);
+    usleep(5000);
     int a,b,n;
 	char buf[1024];
     LPUSER Temp = (LPUSER)malloc(sizeof(user));
     LPUSER TempCheck = (LPUSER)malloc(sizeof(user));
     while(1){
         while(1){
+            usleep(5000);
+            send(sd, "clear!!", strlen("clear!!"), 0);
+            usleep(5000);
             sprintf(buf,"%s", "ID : ");
 	        send(sd, buf, strlen(buf), 0);
-            usleep(50000);
+            usleep(5000);
             n = recv(sd, buf, sizeof(buf), 0);
             if(n<16) break;
             else{
@@ -58,7 +65,7 @@ int login(int sd,LPARRAY userFullList)
         while(1){
         sprintf(buf,"%s", "PW : ");
         send(sd, buf, strlen(buf), 0);
-        usleep(50000);
+        usleep(5000);
         n = recv(sd, buf, sizeof(buf), 0);
 	    if(n<16) break;
         else{
@@ -73,29 +80,32 @@ int login(int sd,LPARRAY userFullList)
         pthread_t newOne;
         for(i=0;i<arraySize((LPC_ARRAY)userFullList);i++){
 	        arrayGetAt((LPC_ARRAY)userFullList,i, (LPDATA*)&TempCheck);
-            usleep(50000);
+            usleep(5000);
             if(strcmp(Temp->id,TempCheck->id)==0){
-                usleep(50000);
+                usleep(5000);
                 if(strcmp(Temp->pass,TempCheck->pass)==0){
                     flagA=1;
-                    TempCheck->request = 1;
-                    arraySetAt(userFullList,i,TempCheck); ////어카지
-                    LPSENDFILE fileGive = (LPSENDFILE)malloc(sizeof(sendFile));
-                    fileGive->sendSd=sd;
-                    fileGive->sendList = userFullList;
-                    if(pthread_create(&newOne, NULL, startMenu,fileGive)!=0) {
-			            perror("pthread_create");}
-                    //pthread_detach(newOne); //아마 쓰레드 디테치 되면서 그냥 꺼지는듯...
-
-                    pthread_join(newOne,NULL);
+                    ((LPUSER)userFullList->lpData[i])->request =1;
+                    break;
+//                    arraySetAt(userFullList,i,(LPDATA)TempCheck); ////어카지
                 }
             }
-
-		}
+        }
+		
         if(flagA==0)
             send(sd,"틀리셨습니다",strlen("틀리셨습니다"),0);
-        if(flagA==1)
-            return 0;
+            usleep(50000);
+        if(flagA==1){
+
+            LPSENDFILE fileGive = (LPSENDFILE)malloc(sizeof(sendFile));
+            fileGive->sendSd=sd;
+            fileGive->sendList = userFullList;
+            if(pthread_create(&newOne, NULL, startMenu,fileGive)!=0) {
+			    perror("pthread_create");}
+            //pthread_detach(newOne); //아마 쓰레드 디테치 되면서 그냥 꺼지는듯...
+            pthread_join(newOne,NULL);
+            break;
+        } 
         continue;
         
     }

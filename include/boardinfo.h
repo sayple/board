@@ -2,7 +2,7 @@
 #define _BOARDINFO_H_
 #include "reply.h"
 typedef struct {
-    int request; //0 :none 1:add 2:change 3:delete
+    int request; //0 :none 1 : choice
     char title[81];
     char context[501];
     char id[16];

@@ -28,8 +28,8 @@ int loadUserList(LPARRAY* userFullList)
         str = inputLine(fp);
         if(NULL==str) break;
         LPUSER Temp = (LPUSER)malloc(sizeof(user));
-        Temp->request=0;
         if(str[0] !=0){
+            Temp->request=0;
             key = strtok(str,"/");
             if(key==NULL) {
                 perror("file open error!\n");
@@ -81,35 +81,31 @@ int loadBoardList(LPARRAY* boardFullList)
         LPBOARD Temp = (LPBOARD)malloc(sizeof(boardNormal));
         Temp->request=0;
         if(str[0] !=0){
-            key = strtok(str,"///");
+            key = strtok(str,"}");
             if(key==NULL) {
-                perror("file open error!\n");
+                perror("title open error!\n");
                 exit(1);
             }
             strcpy(Temp->title,key);
-            key = strtok(NULL,"///");
+            key = strtok(NULL,"}");
             if(key==NULL) {
-                perror("file open error!\n");
+                perror("context open error!\n");
                 exit(1);
             }
             strcpy(Temp->context,key);
-            key = strtok(NULL,"///");
+            key = strtok(NULL,"}");
             if(key==NULL) {
-                perror("file open error!\n");
+                perror("key open error!\n");
                 exit(1);
             }
             strcpy(Temp->id,key);
-            key = strtok(NULL,"///");
+            key = strtok(NULL,"}");
             if(key==NULL) {
-                perror("file open error!\n");
+                perror("origin open error!\n");
                 exit(1);
             }
             Temp->originNumber = atoi(key);
-            key = strtok(NULL,"///");
-            if(key==NULL) {
-                perror("file open error!\n");
-                exit(1);
-            }
+            key = strtok(NULL,"}");
             strcpy(Temp->reply,key);
 
         }
@@ -138,25 +134,25 @@ int loadDataBoardList(LPARRAY* dataFullList)
         if(NULL==str) break;
         LPDATABOARD Temp = (LPDATABOARD)malloc(sizeof(dataBoard));
         if(str[0] !=0){
-            key = strtok(str,"///");
+            key = strtok(str,"}");
             if(key==NULL) {
                 perror("file open error!\n");
                 exit(1);
             }
             strcpy(Temp->fileName,key);
-            key = strtok(NULL,"///");
+            key = strtok(NULL,"}");
             if(key==NULL) {
                 perror("file open error!\n");
                 exit(1);
             }
             strcpy(Temp->Data,key);
-            key = strtok(NULL,"///");
+            key = strtok(NULL,"}");
             if(key==NULL) {
                 perror("file open error!\n");
                 exit(1);
             }
             strcpy(Temp->id,key);
-            key = strtok(NULL,"///");
+            key = strtok(NULL,"}");
         }
         arrayAdd(*dataFullList,(const LPDATA) Temp);
 	}
@@ -177,10 +173,12 @@ int saveUserList(LPARRAY userFullList){
         arrayGetAt(userFullList,i,(LPDATA*)&newTemp);
         sprintf(buff,"%s/%s/%s/%s\n",newTemp->id,newTemp->pass,\
         newTemp->name,newTemp->tellNo);
-        fwrite(buff,1,sizeof(buff),fp);
+        fwrite(buff,1,strlen(buff),fp); //sizeof에서 바꿔봄
     }
+    fclose(fp);
     free(newTemp);
     pthread_mutex_unlock(&mutexid);
+
     return 0;
 }
 
@@ -190,16 +188,17 @@ int saveBoardList(LPBOARD temp,LPARRAY boardFullList){
     pthread_mutex_lock(&mutexid);
     LPBOARD newTemp = (LPBOARD)malloc(sizeof(boardNormal));
     loadBoardList(&boardFullList);
-    arrayAdd(boardFullList,temp);
+    arrayAdd(boardFullList,(LPDATA)temp);
     FILE* fp;
     char buff[2800];
     fp = fopen("board_contents.txt","w");
     for(int i=0;i<arraySize(boardFullList);i++){
         arrayGetAt(boardFullList,i,(LPDATA*)&newTemp);
-        sprintf(buff,"%s///%s///%s///%d///%s\n",newTemp->title,newTemp->context,\
+        sprintf(buff,"%s}%s}%s}%d}%s\n",newTemp->title,newTemp->context,\
         newTemp->id,newTemp->originNumber,newTemp->reply);
-        fwrite(buff,1,sizeof(buff),fp);
+        fwrite(buff,1,strlen(buff),fp);
     }
+    fclose(fp);
     free(newTemp);
     arrayDestroy(boardFullList);
     pthread_mutex_unlock(&mutexid);
@@ -218,12 +217,14 @@ int saveDataBoardList(LPDATABOARD temp, LPARRAY dataBoardFullList){
     fp = fopen("DataBoard.txt","w");
     for(int i=0;i<arraySize(dataBoardFullList);i++){
         arrayGetAt(dataBoardFullList,i,(LPDATA*)&newTemp);
-        sprintf(buff,"%s///%s///%s",newTemp->fileName,newTemp->Data,\
+        sprintf(buff,"%s}%s}%s",newTemp->fileName,newTemp->Data,\
         newTemp->id);
-        fwrite(buff,1,sizeof(buff),fp);
+        fwrite(buff,1,strlen(buff),fp);
     }
+    fclose(fp);
     free(newTemp);
     arrayDestroy(dataBoardFullList);
     pthread_mutex_unlock(&mutexid);
+    
     return 0;
 }
