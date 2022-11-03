@@ -169,7 +169,8 @@ int arrayRemoveAt(LPARRAY lpArray, int nPos)
         //색인 오류 코드를 리턴합니다
         return ERR_ARRAY_POSITION;
     }
-    
+    //메이비 포인트 삭제 지점 시 삭제된 것에 해제가 없다 따라서 해제를 준다.
+    free(lpArray->lpData[nPos]);
     //삭제된 뒤쪽의 배열 위치를 앞으로 이동한다.
     memcpy(&lpArray->lpData[nPos], &lpArray->lpData[nPos+1], (lpArray->max_size - lpArray->size - 1) * sizeof(LPDATA));
     

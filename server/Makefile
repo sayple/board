@@ -1,9 +1,9 @@
 INC = ../include
 CFLAGS = -fPIC -c  -g
-LDFLAGS = -L../libsrc -lmenuS  -lhash -linput -lload -larray -lpthread -ldl
+LDFLAGS = -L../libsrc -lmenuS  -lhash -linput -lload -luseful -larray -lpthread -ldl
 #LDFLAGS = -L../../lib -lmenu -lprofile -lhash -lio  -lpthread
 OBJS = join.o login.o board.o #load.o 혹시안되면 여기에 넣어
-TARGET = libjoin.so liblogin.so libboard.so libwriteboard.so
+TARGET = libjoin.so liblogin.so libboard.so libwriteboard.so libreadboard.so libfindboard.so
 
 all: userServer $(TARGET)
 
@@ -26,6 +26,12 @@ libboard.so: board.o
 	$(LD) -shared -o $@ $<
 #	cp lib$@.so ../../bin/
 libwriteboard.so: writeboard.o 
+	$(LD) -shared -o $@ $<
+#	cp lib$@.so ../../bin/
+libreadboard.so: readboard.o 
+	$(LD) -shared -o $@ $<
+#	cp lib$@.so ../../bin/
+libfindboard.so: findboard.o 
 	$(LD) -shared -o $@ $<
 #	cp lib$@.so ../../bin/
 .c.o:

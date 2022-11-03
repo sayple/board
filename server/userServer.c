@@ -25,13 +25,17 @@
 
 void* start_login(void* arg)
 {
+	usleep(50000);
 	LPMENU lpMenu;
 	LPARRAY userFullList;
 	loadUserList(&userFullList);
 	int sd = *((int*) arg);	
 	menuCreate(&lpMenu,"menu_login.txt");
+	send(sd, "clear!!", strlen("clear!!"), 0);
+	usleep(50000);
 	menuRun(lpMenu,sd,userFullList);
 	menuDestroy(lpMenu);
+	arrayDestroy(userFullList);
 	close(sd);
 	return NULL;
 	

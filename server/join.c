@@ -23,17 +23,21 @@ int join(int sd,LPARRAY userFullList)
 {
     pthread_mutex_t mutexid;
     pthread_mutex_init(&mutexid,NULL);
-
+    loadUserList(&userFullList); ////////////change 
     int n;
 	char buf[1024];
     LPUSER Temp = (LPUSER)malloc(sizeof(user));
     Temp->request=0;
+    fflush(stdin);
+    fflush(stdout);
     LPUSER TempCheck = (LPUSER)malloc(sizeof(user));
+    send(sd, "clear!!", strlen("clear!!"), 0);
+    usleep(50000);
         while(1){
             int flag =1;
             sprintf(buf,"%s", "ID  : ");
 	        send(sd, buf, strlen(buf), 0);
-            usleep(50000);
+            usleep(500000); //10배늘려봄
             n = recv(sd, buf, sizeof(buf), 0);
             if(n<16){
                 int i=0;
@@ -97,6 +101,9 @@ int join(int sd,LPARRAY userFullList)
     pthread_mutex_lock(&mutexid);
     arrayAdd(userFullList,(const LPDATA) Temp);
     saveUserList(userFullList);
+    sprintf(buf,"%s", "clear!!");
+	send(sd, buf, strlen(buf), 0);
+    usleep(50000);
     sprintf(buf,"%s", "회원가입이 완료되셨습니다.\n\n");
     send(sd,buf,sizeof(buf),0);
     free(TempCheck);

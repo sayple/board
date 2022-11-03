@@ -20,6 +20,8 @@
 #include "load.h"
 
 int board(int sd,LPARRAY userFullList){
+    send(sd, "clear!!", strlen("clear!!"), 0);
+    usleep(50000);
     LPMENU lpMenu;
     menuCreate(&lpMenu,"menu_board.txt");
 	menuRun(lpMenu,sd,userFullList);

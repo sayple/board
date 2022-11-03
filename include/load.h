@@ -9,4 +9,6 @@ int loadDataBoardList(LPARRAY* dataFullList);
 int saveUserList(LPARRAY boardFullList);
 int saveBoardList(LPBOARD temp, LPARRAY boardFullList);
 int saveDataBoardList(LPDATABOARD temp, LPARRAY dataFullList);
+char* loadName(LPARRAY userFullList);
+char* loadText(LPARRAY* boardFullList);
 #endif

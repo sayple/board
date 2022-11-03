@@ -20,6 +20,7 @@
 #include "boardinfo.h"
 #include "userinfo.h"
 #include <time.h>
+
 int writeBoard(int sd,LPARRAY userFullList){
     LPARRAY boardFulllist;
     char buf[1024];
@@ -28,22 +29,25 @@ int writeBoard(int sd,LPARRAY userFullList){
     int n;
     for(int i=0;i<arraySize((LPC_ARRAY)userFullList);i++){
 	    arrayGetAt((LPC_ARRAY)userFullList,i, (LPDATA*)&user1);
-        if(user1->request ==1) break;
+        if(user1->request ==1){
+            strcpy(TempBoard->id,user1->id);
+            break;
+        }
     }
-    strcpy(TempBoard->id,user1->id);
-    strcpy(TempBoard->reply,"");
+    free(user1);
+    strcpy(TempBoard->reply,"리플목록");
     srand(time(NULL));
     n=rand()%50000000;
     TempBoard->originNumber=n;
-    loadBoardList(&boardFulllist);
     while(1){
+        usleep(50000);
         sprintf(buf,"%s", "clear!!");
 	    send(sd, buf, strlen(buf), 0);
         usleep(50000);
         sprintf(buf,"%s", "제목  : ");
 	    send(sd, buf, strlen(buf), 0);
         usleep(50000);
-        n = recv(sd, buf, sizeof(buf), 0);
+        n = recv(sd, buf, 1024, 0);
         usleep(50000);
         if(n>80){
             sprintf(buf,"%s", "80자를 초과하였습니다");
@@ -51,30 +55,55 @@ int writeBoard(int sd,LPARRAY userFullList){
         }
         else break;
     }
-    buf[n] = '\0';
-    strcpy(TempBoard->title,buf);
+    buf[n-1] = '\0';
+    if(strcmp(buf,"")==0){
+        strcpy(TempBoard->title,"  ");
+    }
+    else
+        strcpy(TempBoard->title,buf);
+    strcpy(TempBoard->context,""); //초기화
+    sprintf(buf,"%s","========================================================\n");
+	send(sd, buf, strlen(buf), 0);
+    usleep(5000);
+    sprintf(buf,"%s", "내용(마지막에 '/w'를 넣을 시 전송됩니다)\n");
+    send(sd, buf, strlen(buf), 0);
+    int totalN=0;
+     usleep(5000);
+    sprintf(buf,"%s","========================================================\n\n");
+    send(sd, buf, strlen(buf), 0);
     while(1){
-        sprintf(buf,"%s", "내용\n");
-	    send(sd, buf, strlen(buf), 0);
         usleep(50000);
-        sprintf(buf,"%s","========================================================\n\n");
-        send(sd, buf, strlen(buf), 0);
+        n = recv(sd, buf, 1024, 0);
         usleep(50000);
-        n = recv(sd, buf, sizeof(buf), 0);
-        usleep(50000);
-        if(n>500){
-	        buf[501] ='\0';
+        totalN+=n;
+        if(totalN>500){
             strcpy(TempBoard->context,buf);
+            TempBoard->context[501]='\0';
             usleep(50000);
             sprintf(buf,"%s", "500자를 초과하여 일부 내용만 저장합니다.\n");
             send(sd, buf, strlen(buf), 0);
+            break;
+        }
+        else if(buf[n-2]=='w'&&buf[n-3]=='/'){
+            buf[n-3] = '\0';
+            strcat(TempBoard->context,buf);
+            break;
         }
         else{
-            buf[n] = '\0';
-            strcpy(TempBoard->context,buf);
-        }       
+            strcat(TempBoard->context,"|");
+            strcat(TempBoard->context,buf);
+        }          
     }
-    arrayAdd(boardFulllist,TempBoard);
-    free(user1);
+    if(strcmp(TempBoard->context,"")==0){
+        strcpy(TempBoard->context,"  ");
+    }
+    loadBoardList(&boardFulllist);
+    sprintf(buf,"%s %s %s\n",TempBoard->title,TempBoard->context,TempBoard->id);
+    send(sd,buf,strlen(buf),0);
+    usleep(50000);
+    saveBoardList(TempBoard,boardFulllist);
+    usleep(50000);
+    arrayDestroy(boardFulllist);
+    send(sd, "clear!!", strlen("clear!!"), 0);
     return 0;
 }

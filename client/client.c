@@ -26,6 +26,7 @@ void* reader_thread(void *arg);
 void* writer_thread(void *arg);
 pthread_t tid1, tid2;
 struct termio tbuf, oldtbuf;
+
 int main(int argc, char *argv[])
 {
 	if(argc!=2){
@@ -64,8 +65,6 @@ int main(int argc, char *argv[])
 		perror("CONNECT");
 		return 1;
 	}
-
-	system("clear");
 
 	if(pthread_create(&tid2, NULL, reader_thread, &sockfd) != 0){
 		perror("pthread_create");
@@ -126,7 +125,6 @@ void* writer_thread(void *arg){
 		buffer[n-1] = '\0';
 		if(!strcmp(buffer, "/q"))
 			break;
-		nclear();
 		send(sock, buffer, n, 0);
 		
 	}
