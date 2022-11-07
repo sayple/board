@@ -45,10 +45,10 @@ int findData(int sd,LPARRAY userFullList,int* chatUser){
             usleep(5000);
             return 0;
         }
-        sprintf(buf,"\n│ chocie ||  fileNO ||                          title                      \n" );
+        sprintf(buf,"│ chocie ||  fileNO ||                          title                      \n" );
         send(sd,buf,strlen(buf),0);
         usleep(5000);
-        sprintf(buf,"%s","\n│======================================================================================================================================\n");
+        sprintf(buf,"%s","│======================================================================================================================================\n");
         send(sd,buf,strlen(buf),0);
         sprintf(fileNameSave,"cloud");
         loadDataBoardList(&dataFullList,fileNameSave);
@@ -84,7 +84,7 @@ int findData(int sd,LPARRAY userFullList,int* chatUser){
                         strcat(buf,"\n");
                         k--;
                     }
-                    strcat(buf, "\n\n  어느 파일을 다운받으시겠습니까?(다음자료보기: 0 종료시 :/e) : ");
+                    strcat(buf, "\n\n\n  어느 파일을 다운받으시겠습니까?(다음자료보기: 0 종료시 :/e) : ");
                     usleep(5000);
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);

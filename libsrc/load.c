@@ -249,8 +249,8 @@ char* loadName(LPARRAY userFullList){
 void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
     int i,n;
     char* key;
-    char buf[512];
-    char buff[1024];
+    char buf[1024];
+    char buff[2048];
     int countRow;
     int deleteFlag = 0;
     LPBOARD newTemp;

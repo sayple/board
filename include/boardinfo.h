@@ -6,10 +6,10 @@
 typedef struct {
     int request; //0 :none 1 : choice
     char title[81];
-    char context[524];
+    char context[756];
     char id[16];
     char nick[16];
-    char reply[2048];
+    char reply[1024];
 }boardNormal,*LPBOARD;
 
 typedef struct{

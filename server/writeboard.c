@@ -81,6 +81,11 @@ int writeBoard(int sd,LPARRAY userFullList,int* chatUser){
             buf[500-totalN+n]='\0';
             strcat(TempBoard->context,"|");
             strcat(TempBoard->context,buf);
+            time(&now);
+            timeInfo = localtime(&now);
+            sprintf(timeWord,"|                                                                                                            %s",asctime(timeInfo));
+            timeWord[strlen(timeWord)-1]='\0';
+            strcat(TempBoard->context,timeWord);
             usleep(5000);
             sprintf(buf,"%s", "500자를 초과하여 일부 내용만 저장합니다.\n");
             send(sd, buf, strlen(buf), 0);
