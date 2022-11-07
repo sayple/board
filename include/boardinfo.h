@@ -8,7 +8,7 @@ typedef struct {
     char title[81];
     char context[524];
     char id[16];
-    int originNumber;
+    char nick[16];
     char reply[2048];
 }boardNormal,*LPBOARD;
 

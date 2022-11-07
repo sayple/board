@@ -192,10 +192,12 @@ int arrayDestroy(LPARRAY lpArray)
     //해제할 배열 메모리가 존재하면 해제한다.
     ////////////////////////////여기 재확인 필요
     if(NULL != lpArray->lpData) {
-        LPDATA Temp;
-        Temp = lpArray->lpData;
-        lpArray->lpData++;     ////////메이비 포인트
-		free(Temp);
+        int MaxSize = lpArray->size;
+
+        for(int i=0;i<MaxSize;i++){
+            free(lpArray->lpData[i]);
+        }
+        free(lpArray->lpData);     ////////메이비 포인트
     }
     
     //배열을 관리하는 구조체 메모리를 해제한다.

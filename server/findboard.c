@@ -64,6 +64,14 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
         usleep(5000);
         int cnt=0;
         int checkBox[11] ={0,};
+        if(arraySize((LPC_ARRAY)boardFulllist)==0){
+            sprintf(buf,"│ 게시글이 없습니다.\n" );
+            send(sd,buf,strlen(buf),0);
+            sleep(1);
+            send(sd, "clear!!", strlen("clear!!"), 0);
+            usleep(5000);
+            return 1;
+        }
         int i=arraySize((LPC_ARRAY)boardFulllist)-1;
         for(;i>=0;i--){
 	        arrayGetAt((LPC_ARRAY)boardFulllist,i, (LPDATA*)&TempBoard);
@@ -78,7 +86,7 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
                 usleep(5000);
                 sprintf(buf,"\n│ 찾는 내용이 존재하지 않습니다.");
                 send(sd,buf,strlen(buf),0);
-                sleep(2);
+                sleep(1);
                 send(sd, "clear!!", strlen("clear!!"), 0);
                 usleep(5000);
                 return 0;
@@ -120,7 +128,7 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
                         ((LPBOARD)boardFulllist->lpData[checkBox[choice]])->request =0;
                         usleep(5000);
                         saveBoard(boardFulllist);
-                        sleep(1);
+                        usleep(5000);
                         goto M;
                     }
                     else{

@@ -107,7 +107,7 @@ int loadBoardList(LPARRAY* boardFullList)
                 perror("origin open error!\n");
                 exit(1);
             }
-            Temp->originNumber = atoi(key);
+            strcpy(Temp->nick,key);
             key = strtok(NULL,"}");
             strcpy(Temp->reply,key);
 
@@ -180,8 +180,8 @@ int saveBoardList(LPBOARD temp,LPARRAY boardFullList){
     fp = fopen("board_contents.txt","w");
     for(int i=0;i<arraySize(boardFullList);i++){
         arrayGetAt(boardFullList,i,(LPDATA*)&newTemp);
-        sprintf(buff,"%s}%s}%s}%d}%s\n",newTemp->title,newTemp->context,\
-        newTemp->id,newTemp->originNumber,newTemp->reply);
+        sprintf(buff,"%s}%s}%s}%s}%s\n",newTemp->title,newTemp->context,\
+        newTemp->id,newTemp->nick,newTemp->reply);
         fwrite(buff,1,strlen(buff),fp);
     }
     fclose(fp);
@@ -201,8 +201,8 @@ int saveBoard(LPARRAY boardFullList){
     
     for(int i=0;i<arraySize(boardFullList);i++){
         arrayGetAt(boardFullList,i,(LPDATA*)&newTemp);
-        sprintf(buff,"%s}%s}%s}%d}%s\n",newTemp->title,newTemp->context,\
-        newTemp->id,newTemp->originNumber,newTemp->reply);
+        sprintf(buff,"%s}%s}%s}%s}%s\n",newTemp->title,newTemp->context,\
+        newTemp->id,newTemp->nick,newTemp->reply);
         fwrite(buff,1,strlen(buff),fp);
     }
     fclose(fp);
@@ -262,9 +262,15 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
                 send(sd, "clear!!", strlen("clear!!"), 0);
                 if(strcmp(id,newTemp->id)==0) deleteFlag=1;
                 usleep(5000);
-                sprintf(buf,"\n│ 작성자 : %s      ",newTemp->id);
-                send(sd, buf, strlen(buf), 0);
-                if(deleteFlag==1) send(sd, "  ---- 삭제 : /dd",strlen("  ---- 삭제 : /dd"),0);
+                if(deleteFlag==1){
+                    sprintf(buf, "\n│ 작성자 : %s ",newTemp->nick);
+                    strcat(buf,"      [삭제가능 : 단축키 /dd ]");
+                    send(sd, buf, strlen(buf), 0);
+                }
+                else{
+                    sprintf(buf,"\n│ 작성자 : %s      ",newTemp->nick);
+                    send(sd, buf, strlen(buf), 0);
+                }
                 usleep(5000);
                 sprintf(buf,"%s","\n│======================================================================================================================================\n");
                 send(sd, buf, strlen(buf), 0);
@@ -281,7 +287,7 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
                     send(sd,buff,strlen(buff),0);
                 }
                 usleep(5000);
-                sprintf(buf,"%s","\n│======================================================================================================================================\n");
+                sprintf(buf,"%s","│======================================================================================================================================\n");
                 send(sd, buf, strlen(buf), 0);
                 usleep(5000);
                 strcpy(buf,newTemp->reply);

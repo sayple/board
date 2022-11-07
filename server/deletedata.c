@@ -41,6 +41,7 @@ int deleteData(int sd,LPARRAY userFullList,int* chatUser){
         return 0;
     }
     while(1){
+        L:
         A:
         usleep(5000);
         send(sd, "clear!!", strlen("clear!!"), 0);
@@ -109,7 +110,7 @@ int deleteData(int sd,LPARRAY userFullList,int* chatUser){
                         sprintf(buf, "\n 잘못고르셨습니다.");
                         send(sd,buf,strlen(buf),0);
                         sleep(1);
-                        goto A;
+                        goto L;
                         }
                 }
                 send(sd, "clear!!", strlen("clear!!"), 0);

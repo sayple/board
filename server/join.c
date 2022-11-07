@@ -46,41 +46,47 @@ int join(int sd,LPARRAY userFullList,int* chatUser)
                 for(i=0;i<arraySize(userFullList);i++){
 	                arrayGetAt(userFullList,i, (LPDATA*)&TempCheck);
                     if(strcmp(Temp->id,TempCheck->id)==0){
-                        sprintf(buf,"│  %s","중복된 ID입니다. 다시 입력하십시요 \n ");
+                        sprintf(buf,"│  %s","중복된 ID입니다. 다시 입력하십시요.\n");
                         send(sd,buf,sizeof(buf),0);
+                        sleep(1);
                         break;
 		            }
                 }
                 if(i==arraySize(userFullList)) flag=0;
             }
             else{
-                sprintf(buf,"│  %s","ID 기준을 초과하셨습니다. 다시 입력하십시요 \n ");
+                sprintf(buf,"│  %s","ID 기준을 초과하셨습니다. 다시 입력하십시요.\n");
                 send(sd,buf,sizeof(buf),0);
+                sleep(1);
             }
             if(flag==0) break;
         }
         while(1){
-        sprintf(buf,"│  %s", "PW  : ");
+        sprintf(buf,"%s", "│  PW  : ");
         send(sd, buf, strlen(buf), 0);
         usleep(50000);
+        memset(buf,0,sizeof(char)*1024);
         n = recv(sd, buf, sizeof(buf), 0);
 	    if(n<16) break;
         else{
-            sprintf(buf,"│  %s","PW 기준을 초과하셨습니다. 다시 입력하십시요 \n ");
+            sprintf(buf,"│  %s","PW 기준을 초과하셨습니다. 다시 입력하십시요.\n");
             send(sd,buf,sizeof(buf),0);
+            sleep(1);
             }
         }
         buf[n] = '\0';
 	    strcpy(Temp->pass,buf);
         while(1){
-            sprintf(buf,"│  %s", "NICK  : ");
+            memset(buf,0,sizeof(char)*1024);
+            sprintf(buf,"%s", "│  NICK  : ");
 	        send(sd, buf, strlen(buf), 0);
             usleep(50000);
             n = recv(sd, buf, sizeof(buf), 0);
             if(n<16) break;
             else{
-                sprintf(buf,"│  %s","닉네임 기준을 초과하셨습니다. 다시 입력하십시요 \n ");
+                sprintf(buf,"│  %s","닉네임 기준을 초과하셨습니다. 다시 입력하십시요.\n");
                 send(sd,buf,sizeof(buf),0);
+                sleep(1);
             }
         }
 	    buf[n] = '\0';
@@ -92,8 +98,9 @@ int join(int sd,LPARRAY userFullList,int* chatUser)
             n = recv(sd, buf, sizeof(buf), 0);
             if(n<16) break;
             else{
-                sprintf(buf,"│  %s","전화번호 기준을 초과하셨습니다. 다시 입력하십시요 \n ");
+                sprintf(buf,"│  %s","전화번호 기준을 초과하셨습니다. 다시 입력하십시요.\n");
                 send(sd,buf,sizeof(buf),0);
+                sleep(1);
             }
         }
 	    buf[n] = '\0';
@@ -106,10 +113,11 @@ int join(int sd,LPARRAY userFullList,int* chatUser)
     usleep(5000);
     sprintf(buf,"\n│  %s", "회원가입이 완료되셨습니다.\n\n");
     send(sd,buf,sizeof(buf),0);
-    usleep(5000);
+    sleep(1);
     sprintf(buf,"%s", "clear!!");
 	send(sd, buf, strlen(buf), 0);
     pthread_mutex_unlock(&mutexid);
+    usleep(5000);
     
     return 0;
 }

@@ -25,7 +25,7 @@ MENU_TITLE_3=[3] CHATTING
 
 #########################################################
 #menu가 선택되었을 때 로드할 shared object 의 이름을 관리하는 부분 
-MENU_TITLE_SO_1=/home/mobis/board/serverlibboard.so
+MENU_TITLE_SO_1=/home/mobis/board/server/libboard.so
 MENU_TITLE_SO_2=/home/mobis/board/server/libdataboard.so
 MENU_TITLE_SO_3=/home/mobis/board/server/libchatting.so
 

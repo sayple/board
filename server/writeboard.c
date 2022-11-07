@@ -22,8 +22,11 @@
 #include <time.h>
 
 int writeBoard(int sd,LPARRAY userFullList,int* chatUser){
+    time_t now;
+    struct tm* timeInfo;
     LPARRAY boardFulllist;
     char buf[1024];
+    char timeWord[256];
     LPUSER user1;
     LPBOARD TempBoard = (LPBOARD)malloc(sizeof(boardNormal));
     int n;
@@ -31,13 +34,11 @@ int writeBoard(int sd,LPARRAY userFullList,int* chatUser){
 	    arrayGetAt((LPC_ARRAY)userFullList,i, (LPDATA*)&user1);
         if(user1->request ==1){
             strcpy(TempBoard->id,user1->id);
+            strcpy(TempBoard->nick,user1->name);
             break;
         }
     }
     strcpy(TempBoard->reply,"리플목록|");
-    srand(time(NULL));
-    n=rand()%50000000;
-    TempBoard->originNumber=n;
     while(1){
         usleep(50000);
         sprintf(buf,"%s", "clear!!");
@@ -88,6 +89,11 @@ int writeBoard(int sd,LPARRAY userFullList,int* chatUser){
         }
         else if(buf[n-2]=='w'&&buf[n-3]=='/'){
             buf[n-3] = '\0';
+            time(&now);
+            timeInfo = localtime(&now);
+            sprintf(timeWord,"|                                                                                                            %s",asctime(timeInfo));
+            timeWord[strlen(timeWord)-1]='\0';
+            strcat(buf,timeWord);
             strcat(TempBoard->context,buf);
             break;
         }

@@ -85,7 +85,7 @@ int upload(int sd,LPARRAY userFullList,int* chatUser){
                     if(choice>(cnt-1)%10+1){
                         sprintf(buf, "\n 잘못고르셨습니다.");
                         send(sd,buf,strlen(buf),0);
-                        continue;
+                        goto A;
                     }
                     else if(choice<=10 &&choice>0){
                         int fs,sread;
@@ -117,7 +117,7 @@ int upload(int sd,LPARRAY userFullList,int* chatUser){
                     else{
                         sprintf(buf, "잘못고르셨습니다.");
                         send(sd,buf,strlen(buf),0);
-                        continue;
+                        goto A;
                         }
                 }
                 send(sd, "clear!!", strlen("clear!!"), 0);

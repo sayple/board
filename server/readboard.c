@@ -49,6 +49,14 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
         usleep(5000);
         int cnt=0;
         int checkBox[11] ={0,};
+        if(arraySize((LPC_ARRAY)boardFulllist)==0){
+            sprintf(buf,"│ 게시글이 없습니다.\n" );
+            send(sd,buf,strlen(buf),0);
+            sleep(1);
+            send(sd, "clear!!", strlen("clear!!"), 0);
+            usleep(5000);
+            return 1;
+        }
         int i=arraySize((LPC_ARRAY)boardFulllist)-1;
         for(;i>=0;i--){
 
