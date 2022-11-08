@@ -1,6 +1,5 @@
 #ifndef _BOARDINFO_H_
 #define _BOARDINFO_H_
-#include "reply.h"
 #include <sys/types.h>
 #include <dirent.h>
 typedef struct {

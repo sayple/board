@@ -4,17 +4,16 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-
 /*동적 라이브러리를 사용하기 위한 해더 파일 */
 #include <dlfcn.h>
 #include "menu.h"
 #include "array.h"
 #include "load.h"
 #include "boardinfo.h"
-#include "reply.h"
 #include "userinfo.h"
 #include "total.h"
 #include "cursorCon.h"
+#include <unistd.h>
 int menuCreate(LPMENU* lppRet,char* fileName)
 {
     LPPROFILE lpProfile;
@@ -114,6 +113,8 @@ int menuRun(LPC_MENU lpMenu,int sd,LPARRAY userFullList,int* chatUser)
     char buffer[1024];
     char endText[32];
     while (1) {
+        send(sd, "clear!!", strlen("clear!!"), 0);
+        usleep(5000);
         sprintf(buffer,"┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐\n");
         send(sd,buffer,strlen(buffer),0);
         sprintf(buffer,"│                                                                                                                                       │\n");
@@ -162,6 +163,7 @@ int menuRun(LPC_MENU lpMenu,int sd,LPARRAY userFullList,int* chatUser)
         	return 0;
         } else {
         	printf("잘못입력되었습니다\n");
+            continue;
         }
     }
 

@@ -66,7 +66,7 @@ int download(int sd,LPARRAY userFullList,int* chatUser){
                         strcat(buf,"\n");
                         k--;
                     }
-                    strcat(buf, "\n\n\n\n  어느 파일을 다운받으시겠습니까?(다음자료보기: 0 종료시 :/e) : ");
+                    strcat(buf, "\n\n\n\n  어느 파일을 다운받으시겠습니까?(다음자료보기: 0  종료시: /e) : ");
                     usleep(5000);
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
@@ -118,7 +118,8 @@ int download(int sd,LPARRAY userFullList,int* chatUser){
                     else{
                         sprintf(buf, "\n 잘못고르셨습니다.");
                         send(sd,buf,strlen(buf),0);
-                        continue;
+                        sleep(1);
+                        goto A;
                         }
                 }
                 send(sd, "clear!!", strlen("clear!!"), 0);

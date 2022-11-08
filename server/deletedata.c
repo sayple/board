@@ -35,9 +35,9 @@ int deleteData(int sd,LPARRAY userFullList,int* chatUser){
     if(strcmp(user1->id,"admin")!=0){
         sprintf(buf," 해당 사용자는 삭제할 권한이 없습니다.");
         send(sd,buf,strlen(buf),0);
-        sleep(2);
+        sleep(1);
         send(sd, "clear!!", strlen("clear!!"), 0);
-        usleep(5000);
+        usleep(50000);
         return 0;
     }
     while(1){
@@ -73,7 +73,7 @@ int deleteData(int sd,LPARRAY userFullList,int* chatUser){
                         strcat(buf,"\n");
                         k--;
                     }
-                    strcat(buf, "\n\n\n\n  어느 파일을 삭제하시겠습니까?(다음자료보기: 0 종료시 :/e) : ");
+                    strcat(buf, "\n\n\n\n  어느 파일을 삭제하시겠습니까?(다음자료보기: 0  종료시: /e) : ");
                     usleep(5000);
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);

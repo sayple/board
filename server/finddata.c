@@ -60,20 +60,18 @@ int findData(int sd,LPARRAY userFullList,int* chatUser){
         int i;
         for(i=0;i<Max;i++){
 	        arrayGetAt((LPC_ARRAY)dataFullList,i, (LPDATA*)&TempBoard);
-            printf("1%s : %s\n",TempBoard->fileName,findWord);/////
             if(strstr(TempBoard->fileName,findWord)!=NULL){
-                 printf("11%s : %s\n",TempBoard->fileName,findWord);////////
                 sprintf(buf, "│  [%2d ] ||%6d   || %30s \n",(cnt%10+1),TempBoard->number,TempBoard->fileName);
                 checkBox[cnt%10+1] = TempBoard->number;
                 cnt++;
                 send(sd,buf,strlen(buf),0);
             }
-            if(cnt==0 && i==Max){
+            if(cnt==0 && i==Max-1){
                 send(sd, "clear!!", strlen("clear!!"), 0);
                 usleep(5000);
                 sprintf(buf,"\n│ 찾는 파일명이 존재하지 않습니다.");
                 send(sd,buf,strlen(buf),0);
-                sleep(2);
+                sleep(1);
                 send(sd, "clear!!", strlen("clear!!"), 0);
                 usleep(5000);
                 return 0;
@@ -86,7 +84,7 @@ int findData(int sd,LPARRAY userFullList,int* chatUser){
                         strcat(buf,"\n");
                         k--;
                     }
-                    strcat(buf, "\n\n\n  어느 파일을 다운받으시겠습니까?(다음자료보기: 0 종료시 :/e) : ");
+                    strcat(buf, "\n\n\n  어느 파일을 다운받으시겠습니까?(다음자료보기: 0  종료시: /e) : ");
                     usleep(5000);
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);

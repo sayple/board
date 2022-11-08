@@ -160,7 +160,7 @@ int saveUserList(LPARRAY userFullList){
         arrayGetAt(userFullList,i,(LPDATA*)&newTemp);
         sprintf(buff,"%s/%s/%s/%s\n",newTemp->id,newTemp->pass,\
         newTemp->name,newTemp->tellNo);
-        fwrite(buff,1,strlen(buff),fp); //sizeof에서 바꿔봄
+        fwrite(buff,1,strlen(buff),fp);
     }
     fclose(fp);
     pthread_mutex_unlock(&mutexid);
@@ -173,7 +173,6 @@ int saveBoardList(LPBOARD temp,LPARRAY boardFullList){
     pthread_mutex_init(&mutexid,NULL);
     pthread_mutex_lock(&mutexid);
     LPBOARD newTemp;
-    //loadBoardList(&boardFullList);   ///이건 지워도될거같음. 대신 미리 선언하지
     arrayAdd(boardFullList,(LPDATA)temp);
     FILE* fp;
     char buff[2800];
@@ -253,6 +252,7 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
     char buff[2048];
     int countRow;
     int deleteFlag = 0;
+    int replyFlag =0;
     LPBOARD newTemp;
     for(i=0;i<arraySize((LPC_ARRAY)boardFullList);i++){
 	    arrayGetAt((LPC_ARRAY)boardFullList,i, (LPDATA*)&newTemp);
@@ -314,27 +314,35 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
                 send(sd,buf,strlen(buf),0);
                 usleep(5000);
                 n = recv(sd, buf, 512, 0);
-                if(n>80){
-                    send(sd,"리플을 초과하였습니다. 다시 작성해주세요.\n",strlen("리플을 초과하였습니다. 다시 작성해주세요.\n"),0);
-                    goto V;
-                }
                 if(strcmp(buf,"/r")==0){
+                    replyFlag=1;
                     usleep(5000);
                     sprintf(buf,"%s : ", nickName);
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
                     n = recv(sd, buf, 256, 0);
+                    if(n>80){
+                        send(sd,"리플을 초과하였습니다. 다시 작성해주세요.\n",strlen("리플을 초과하였습니다. 다시 작성해주세요.\n"),0);
+                        goto V;
+                    }
                     sprintf(buff, " %s : %s|",nickName,buf);
                     strcat(newTemp->reply,buff);
                 }
                 else if((strcmp(buf,"/dd")==0)&&(deleteFlag==1)){
                     arrayRemoveAt(boardFullList, i);
+                    saveBoard(boardFullList);//////
                     return;
                 }
                 else if(strcmp(buf,"/e")==0){
                     newTemp->request=0;
+                    if(replyFlag==1) saveBoard(boardFullList);//////
                     return;
                     }
+                else{
+                    sprintf(buff, " 잘못된 입력입니다.\n");
+                    send(sd,buff,strlen(buff),0);
+                    sleep(1);
+                }
             
             usleep(5000);
         }

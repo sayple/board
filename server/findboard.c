@@ -106,7 +106,7 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
                         strcat(buf,"\n");
                         k--;
                     }
-                    strcat(buf, "\n\n\n\n  어느 게시글을 자세히 보고 싶으십니까?(다음글보기: 0 종료시 :/e) : ");
+                    strcat(buf, "\n\n\n\n  어느 게시글을 자세히 보고 싶으십니까?(다음글보기: 0  종료시: /e) : ");
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
                     recv(sd,buf,1024,0);

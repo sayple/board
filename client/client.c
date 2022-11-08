@@ -135,7 +135,7 @@ void* reader_thread(void *arg){
 			close(fs);
 			usleep(5000);
 			stat(buffer,&fileInfo);
-			printf("File 사이즈 : %d\t",(int)fileInfo.st_size);
+			printf("File 사이즈(bytes) : %d\t",(int)fileInfo.st_size);
 			sleep(1);
 			printf("\n%s Download Complete!\n",fileName);
 		}
@@ -168,7 +168,7 @@ void* reader_thread(void *arg){
 			close(fs);
 			usleep(5000);
 			stat(buffer,&fileInfo);
-			printf("File 사이즈 : %d\t",(int)fileInfo.st_size);
+			printf("File 사이즈(bytes) : %d\t",(int)fileInfo.st_size);
 			sleep(1);
 			printf("\n%s upload Complete!\n",fileName);
 		}
@@ -226,11 +226,9 @@ void* reader_thread(void *arg){
 		}
 		else{
 			
-			//if(ioctl(0, TCSETAF, &oldtbuf)==-1) {perror("ioctl"); exit(1);}
 			printf("%s", buffer);
 		}
 		fflush(stdout);
-		//pthread_cleanup_pop(0);
 	}
 	pthread_cancel(tid1);
 	pthread_exit(NULL);
@@ -243,7 +241,7 @@ void* writer_thread(void *arg){
 	char buffer[1024];
 	char ch;
 	while(1){
-		usleep(5000);//0추가해보자
+		usleep(5000);
 		if(termioFlag==1){
 			pthread_cleanup_push(clean_thread,NULL);
 			if(ioctl(0, TCSETAF, &tbuf)==-1) {perror("ioctl"); exit(1);}
@@ -284,6 +282,7 @@ void* writer_thread(void *arg){
 void clean_thread(void* arg){
 	struct termio abs;
 	if(ioctl(0, TCGETA, &abs)==-1) {perror("ioctl"); exit(1);}
+	termioFlag=0;
 	abs.c_lflag|=ECHO;
 	abs.c_lflag|=ICANON;
 	if(ioctl(0, TCSETAF, &abs)==-1) {perror("ioctl"); exit(1);}

@@ -7,7 +7,7 @@ TARGET = libjoin.so liblogin.so libboard.so libwriteboard.so libreadboard.so lib
 
 all: userServer $(TARGET)
 
-userServer: userServer.o #load.o
+userServer: userServer.o 
 	$(CC) -o $@ $@.o $(LDFLAGS)
 	#cp $@ ../../bin/
 
