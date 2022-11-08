@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <time.h>
 #include "userinfo.h"
 #include "boardinfo.h"
 #include "input.h"
@@ -82,9 +83,15 @@ int loadBoardList(LPARRAY* boardFullList)
         str = inputLine(fp);
         if(NULL==str) break;
         LPBOARD Temp = (LPBOARD)malloc(sizeof(boardNormal));
-        Temp->request=0;
+        srand(time(NULL));
         if(str[0] !=0){
             key = strtok(str,"}");
+            if(key==NULL) {
+                perror("title open error!\n");
+                exit(1);
+            }
+            Temp->originNum=atoi(key);
+            key = strtok(NULL,"}");
             if(key==NULL) {
                 perror("title open error!\n");
                 exit(1);
@@ -104,7 +111,7 @@ int loadBoardList(LPARRAY* boardFullList)
             strcpy(Temp->id,key);
             key = strtok(NULL,"}");
             if(key==NULL) {
-                perror("origin open error!\n");
+                perror("id open error!\n");
                 exit(1);
             }
             strcpy(Temp->nick,key);
@@ -179,7 +186,7 @@ int saveBoardList(LPBOARD temp,LPARRAY boardFullList){
     fp = fopen("board_contents.txt","w");
     for(int i=0;i<arraySize(boardFullList);i++){
         arrayGetAt(boardFullList,i,(LPDATA*)&newTemp);
-        sprintf(buff,"%s}%s}%s}%s}%s\n",newTemp->title,newTemp->context,\
+        sprintf(buff,"%d}%s}%s}%s}%s}%s\n",newTemp->originNum,newTemp->title,newTemp->context,\
         newTemp->id,newTemp->nick,newTemp->reply);
         fwrite(buff,1,strlen(buff),fp);
     }
@@ -200,7 +207,7 @@ int saveBoard(LPARRAY boardFullList){
     
     for(int i=0;i<arraySize(boardFullList);i++){
         arrayGetAt(boardFullList,i,(LPDATA*)&newTemp);
-        sprintf(buff,"%s}%s}%s}%s}%s\n",newTemp->title,newTemp->context,\
+        sprintf(buff,"%d}%s}%s}%s}%s}%s\n",newTemp->originNum,newTemp->title,newTemp->context,\
         newTemp->id,newTemp->nick,newTemp->reply);
         fwrite(buff,1,strlen(buff),fp);
     }
@@ -245,7 +252,7 @@ char* loadName(LPARRAY userFullList){
         return NULL;
     }
 }
-void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
+void loadText(int sd,int originNumber,char* id,char* nickName, LPARRAY boardFullList){
     int i,n;
     char* key;
     char buf[1024];
@@ -253,11 +260,14 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
     int countRow;
     int deleteFlag = 0;
     int replyFlag =0;
-    LPBOARD newTemp;
-    for(i=0;i<arraySize((LPC_ARRAY)boardFullList);i++){
-	    arrayGetAt((LPC_ARRAY)boardFullList,i, (LPDATA*)&newTemp);
-        if(newTemp->request ==1){
-            while(1){
+    int enterFlag=0;
+    LPBOARD newTemp,newTempReply;
+    while(1){
+        loadBoardList(&boardFullList);
+        for(i=0;i<arraySize((LPC_ARRAY)boardFullList);i++){
+	        arrayGetAt((LPC_ARRAY)boardFullList,i, (LPDATA*)&newTemp);
+            if(newTemp->originNum ==originNumber){
+                enterFlag=1;
                 countRow=0;
                 send(sd, "clear!!", strlen("clear!!"), 0);
                 if(strcmp(id,newTemp->id)==0 ||strcmp(id,"admin")==0) deleteFlag=1;
@@ -315,7 +325,6 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
                 usleep(5000);
                 n = recv(sd, buf, 512, 0);
                 if(strcmp(buf,"/r")==0){
-                    replyFlag=1;
                     usleep(5000);
                     sprintf(buf,"%s : ", nickName);
                     send(sd,buf,strlen(buf),0);
@@ -325,8 +334,24 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
                         send(sd,"리플을 초과하였습니다. 다시 작성해주세요.\n",strlen("리플을 초과하였습니다. 다시 작성해주세요.\n"),0);
                         goto V;
                     }
-                    sprintf(buff, " %s : %s|",nickName,buf);
-                    strcat(newTemp->reply,buff);
+                    loadBoardList(&boardFullList);
+                    int flagToRepl=0;
+                    for(i=0;i<arraySize((LPC_ARRAY)boardFullList);i++){
+	                    arrayGetAt((LPC_ARRAY)boardFullList,i, (LPDATA*)&newTempReply);
+                        if(newTempReply->originNum ==originNumber){
+                            flagToRepl=1;
+                            sprintf(buff, " %s : %s|",nickName,buf);
+                            strcat(newTempReply->reply,buff);
+                            break;
+                        }
+                    }
+                    if(flagToRepl==0){
+                        sprintf(buff, " 삭제된 글입니다.\n");
+                        send(sd,buff,strlen(buff),0);
+                        sleep(1);
+                        return;
+                    }
+                    saveBoard(boardFullList);
                 }
                 else if((strcmp(buf,"/dd")==0)&&(deleteFlag==1)){
                     arrayRemoveAt(boardFullList, i);
@@ -334,8 +359,6 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
                     return;
                 }
                 else if(strcmp(buf,"/e")==0){
-                    newTemp->request=0;
-                    if(replyFlag==1) saveBoard(boardFullList);//////
                     return;
                     }
                 else{
@@ -346,6 +369,12 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
             
             usleep(5000);
         }
-        } 
+        }
+        if(enterFlag==0){   //글이 삭제된 경우 읽지 않는 처리
+            sprintf(buff, " 삭제된 글입니다.\n");
+            send(sd,buff,strlen(buff),0);
+            sleep(1);
+            return;
+        }
 	}
 }

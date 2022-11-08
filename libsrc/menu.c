@@ -113,6 +113,12 @@ int menuRun(LPC_MENU lpMenu,int sd,LPARRAY userFullList,int* chatUser)
     char buffer[1024];
     char endText[32];
     while (1) {
+        usleep(5000);
+        fflush(stdin);
+        usleep(5000);
+        fflush(stdin);
+        memset(buffer,0,1024);
+        usleep(5000);
         send(sd, "clear!!", strlen("clear!!"), 0);
         usleep(5000);
         sprintf(buffer,"┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐\n");
@@ -146,6 +152,7 @@ int menuRun(LPC_MENU lpMenu,int sd,LPARRAY userFullList,int* chatUser)
 	    send(sd, buffer, strlen(buffer), 0);
 	    n=recv(sd, choice, sizeof(choice), 0);
 	    choice[n]='\0';
+        if(n>3) continue;
 	    if(choice[0]=='\n')
 		    continue;
 			

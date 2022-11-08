@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 typedef struct {
-    int request; //0 :none 1 : choice
+    int originNum; 
     char title[81];
     char context[756];
     char id[16];

@@ -10,6 +10,6 @@ int saveUserList(LPARRAY boardFullList);
 int saveBoardList(LPBOARD temp, LPARRAY boardFullList);
 char* loadID(LPARRAY userFullList);
 char* loadName(LPARRAY userFullList);
-void loadText(int sd, char* id,char* nickName, LPARRAY boardFullList);
+void loadText(int sd,int originNumber,char* id,char* nickName, LPARRAY boardFullList);
 int saveBoard(LPARRAY dataBoardFullList);
 #endif

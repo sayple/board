@@ -103,8 +103,8 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
                         goto M;
                     }
                     else if(choice<=10 &&choice>0){
-                        ((LPBOARD)boardFulllist->lpData[checkBox[choice]])->request =1;
-                        loadText(sd,idUser,idNickName,boardFulllist);
+                        int findNumber = ((LPBOARD)boardFulllist->lpData[checkBox[choice]])->originNum;
+                        loadText(sd,findNumber,idUser,idNickName,boardFulllist);
                         usleep(5000);
                         //saveBoard(boardFulllist);//////
                         goto M;

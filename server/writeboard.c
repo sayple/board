@@ -39,6 +39,8 @@ int writeBoard(int sd,LPARRAY userFullList,int* chatUser){
         }
     }
     strcpy(TempBoard->reply,"리플목록|");
+    srand(time(NULL));
+    TempBoard->originNum=rand()%2147483645;
     while(1){
         usleep(50000);
         sprintf(buf,"%s", "clear!!");
@@ -90,6 +92,7 @@ int writeBoard(int sd,LPARRAY userFullList,int* chatUser){
             sprintf(buf,"%s", "500자를 초과하여 일부 내용만 저장합니다.\n");
             send(sd, buf, strlen(buf), 0);
             sleep(1);
+            fflush(stdin);
             break;
         }
         else if(buf[n-2]=='w'&&buf[n-3]=='/'){

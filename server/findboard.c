@@ -129,12 +129,8 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
                     }
                     usleep(5000);
                     if(choice<=10 &&choice>0){
-                        ((LPBOARD)boardFulllist->lpData[checkBox[choice]])->request =1;
-                        loadText(sd,idUser,idNickName,boardFulllist);
-                        usleep(5000);
-                        ((LPBOARD)boardFulllist->lpData[checkBox[choice]])->request =0;
-                        usleep(5000);
-                        saveBoard(boardFulllist);
+                        int findNumber = ((LPBOARD)boardFulllist->lpData[checkBox[choice]])->originNum;
+                        loadText(sd,findNumber,idUser,idNickName,boardFulllist);
                         usleep(5000);
                         goto M;
                     }

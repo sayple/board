@@ -73,7 +73,7 @@ int findData(int sd,LPARRAY userFullList,int* chatUser){
                 send(sd,buf,strlen(buf),0);
                 sleep(1);
                 send(sd, "clear!!", strlen("clear!!"), 0);
-                usleep(5000);
+                usleep(50000);
                 return 0;
             }
             if(cnt!=0 && (cnt%10==0 || i==Max-1)){

@@ -45,11 +45,18 @@ int login(int sd,LPARRAY userFullList,int* chatUser)
     loadUserList(&userFullList);
     send(sd, "clear!!", strlen("clear!!"), 0);
     usleep(5000);
+    int loginCount=0;
     int a,b,n;
 	char buf[1024];
     LPUSER Temp = (LPUSER)malloc(sizeof(user));
     LPUSER TempCheck;
     while(1){
+        if(loginCount>=5){
+            sprintf(buf,"\n5회 이상 틀리셨습니다.\n");
+            send(sd,buf,strlen(buf),0);
+            sleep(1);
+            break;
+        }
         while(1){
             usleep(5000);
             send(sd, "clear!!", strlen("clear!!"), 0);
@@ -82,6 +89,7 @@ int login(int sd,LPARRAY userFullList,int* chatUser)
         int i;
         int flagA=0;
         pthread_t newOne;
+        loginCount++;
         for(i=0;i<arraySize((LPC_ARRAY)userFullList);i++){
 	        arrayGetAt((LPC_ARRAY)userFullList,i, (LPDATA*)&TempCheck);
             usleep(5000);
@@ -112,7 +120,6 @@ int login(int sd,LPARRAY userFullList,int* chatUser)
             startMenu(fileGive); ///c추가한것 
             break;
         } 
-        continue;
         
     }
     free(Temp);
