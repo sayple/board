@@ -29,6 +29,8 @@ void* writer_thread(void *arg);
 pthread_t tid1, tid2;
 struct termio tbuf, oldtbuf;
 
+int termioFlag =0;
+
 int main(int argc, char *argv[])
 {
 	if(argc!=2){
@@ -95,13 +97,14 @@ void* reader_thread(void *arg){
 			break;
 		}
 		buffer[n] = '\0';
-		pthread_cleanup_push(clean_thread,NULL);
+		//pthread_cleanup_push(clean_thread,NULL);
 		if(strncmp(buffer,"│                                                               PW : ",strlen("│                                                               PW : "))==0){
-			if(ioctl(0, TCSETAF, &tbuf)==-1) {perror("ioctl"); exit(1);}
+			//if(ioctl(0, TCSETAF, &tbuf)==-1) {perror("ioctl"); exit(1);}
+			termioFlag =1;
 			printf("%s", buffer);
 		}
 		else if(strncmp(buffer,"clear!!",7)==0){
-			if(ioctl(0, TCSETAF, &oldtbuf)==-1) {perror("ioctl"); exit(1);}
+			//if(ioctl(0, TCSETAF, &oldtbuf)==-1) {perror("ioctl"); exit(1);}
 			nnclear();
 		}
 		//아래는 다운로드 함수 클라우드 투 클라이언트
@@ -197,7 +200,6 @@ void* reader_thread(void *arg){
 				else{
 					char* delelePoint = chatList[0];
 					char* tempWord=(char*)malloc(sizeof(char)*1024);
-					//memcpy(&chatList[0],&chatList[1],sizeof(char*)*15);
 					for(int i=0;i<14;i++){
 						chatList[i]=chatList[i+1];
 					}
@@ -224,11 +226,11 @@ void* reader_thread(void *arg){
 		}
 		else{
 			
-			if(ioctl(0, TCSETAF, &oldtbuf)==-1) {perror("ioctl"); exit(1);}
+			//if(ioctl(0, TCSETAF, &oldtbuf)==-1) {perror("ioctl"); exit(1);}
 			printf("%s", buffer);
 		}
 		fflush(stdout);
-		pthread_cleanup_pop(0);
+		//pthread_cleanup_pop(0);
 	}
 	pthread_cancel(tid1);
 	pthread_exit(NULL);
@@ -239,14 +241,41 @@ void* writer_thread(void *arg){
 
 	int n;
 	char buffer[1024];
-	
+	char ch;
 	while(1){
-		fgets(buffer, 1024, stdin);
-		n = strlen(buffer);
-		buffer[n-1] = '\0';
-		send(sock, buffer, n, 0);
-		if(!strcmp(buffer, "/q"))
-			break;
+		usleep(5000);//0추가해보자
+		if(termioFlag==1){
+			pthread_cleanup_push(clean_thread,NULL);
+			if(ioctl(0, TCSETAF, &tbuf)==-1) {perror("ioctl"); exit(1);}
+			int i=0;
+			while(1){
+				ch=getchar();
+				if(ch==CR) break;
+				else if(ch == 127 || ch == 8){
+					if(i>=1){
+						printf("\b \b");
+						i--;
+					}
+				}
+				else{
+					buffer[i++]=ch;
+					printf("*");
+				}
+			}
+			termioFlag=0;
+			buffer[i] ='\0';
+			send(sock, buffer, strlen(buffer), 0);
+			if(ioctl(0, TCSETAF, &oldtbuf)==-1) {perror("ioctl"); exit(1);}
+			pthread_cleanup_pop(0);
+		}
+		else{
+			fgets(buffer, 1024, stdin);
+			n = strlen(buffer);
+			buffer[n-1] = '\0';
+			send(sock, buffer, n, 0);
+			if(!strcmp(buffer, "/qqq"))
+				break;
+		}
 		
 	}
 	pthread_cancel(tid2);

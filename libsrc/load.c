@@ -260,7 +260,7 @@ void loadText(int sd,char* id,char* nickName, LPARRAY boardFullList){
             while(1){
                 countRow=0;
                 send(sd, "clear!!", strlen("clear!!"), 0);
-                if(strcmp(id,newTemp->id)==0) deleteFlag=1;
+                if(strcmp(id,newTemp->id)==0 ||strcmp(id,"admin")==0) deleteFlag=1;
                 usleep(5000);
                 if(deleteFlag==1){
                     sprintf(buf, "\n│ 작성자 : %s ",newTemp->nick);

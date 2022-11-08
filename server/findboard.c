@@ -55,7 +55,7 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
         M: 
         send(sd, "clear!!", strlen("clear!!"), 0);
         usleep(5000);
-        sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            subject\n" );
+        sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            title\n" );
         send(sd,buf,strlen(buf),0);
         usleep(5000);
         sprintf(buf,"%s","│======================================================================================================================================\n");
@@ -75,8 +75,15 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
         int i=arraySize((LPC_ARRAY)boardFulllist)-1;
         for(;i>=0;i--){
 	        arrayGetAt((LPC_ARRAY)boardFulllist,i, (LPDATA*)&TempBoard);
+            strcpy(buf,TempBoard->reply);
+            char* key = strtok(buf,"|");
+            int repleNum=0;
+            if(key==NULL){perror("reple read error!");}
+            while(key=strtok(NULL,"|")){
+                repleNum++;
+            }
             if(strstr(TempBoard->title,findWord)!=NULL){
-                sprintf(buf, "│  [%2d ] ||%6d   || %6s    || %s\n",(cnt%10+1),i+1,TempBoard->id,TempBoard->title);
+                sprintf(buf, "│  [%2d ] ||%6d   || %6s    || %s[%d]\n",(cnt%10+1),i+1,TempBoard->id,TempBoard->title,repleNum);
                 send(sd,buf,strlen(buf),0);
                 checkBox[cnt%10+1] = i;
                 cnt++;
@@ -141,10 +148,10 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
                 send(sd, "clear!!", strlen("clear!!"), 0);
                 if(i!=0){
                     usleep(5000);
-                    sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            subject\n" );
+                    sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            title\n" );
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
-                    sprintf(buf,"%s","\n│======================================================================================================================================\n");
+                    sprintf(buf,"%s","│======================================================================================================================================\n");
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
                 }

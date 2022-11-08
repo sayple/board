@@ -103,7 +103,7 @@ int deleteData(int sd,LPARRAY userFullList,int* chatUser){
                         usleep(5000);
                         sprintf(buf," %s 파일이 클라우드에서 삭제되었습니다.",fName);
                         send(sd,buf,strlen(buf),0);
-                        sleep(2);
+                        sleep(1);
                         goto A;
                     }
                     else{

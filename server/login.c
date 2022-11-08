@@ -60,7 +60,7 @@ int login(int sd,LPARRAY userFullList,int* chatUser)
             n = recv(sd, buf, 1024, 0);
             if(n<16) break;
             else{
-                sprintf(buf,"│  %104s","ID 기준을 초과하셨습니다. 다시 입력하십시요 \n");
+                sprintf(buf,"\n│  %104s","ID 기준을 초과하셨습니다. 다시 입력하십시요 \n");
                 send(sd,buf,strlen(buf),0);
             }
         }
@@ -73,7 +73,7 @@ int login(int sd,LPARRAY userFullList,int* chatUser)
         n = recv(sd, buf, 1024, 0);
 	    if(n<16) break;
         else{
-            sprintf(buf,"│\n  %104s","PW 기준을 초과하셨습니다. 다시 입력하십시요 \n");
+            sprintf(buf,"\n│  %104s","PW 기준을 초과하셨습니다. 다시 입력하십시요 \n");
             send(sd,buf,strlen(buf),0);
             }
         }

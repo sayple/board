@@ -40,7 +40,7 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
         M:
         send(sd, "clear!!", strlen("clear!!"), 0);
         usleep(5000);
-        sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            subject\n" );
+        sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            title\n" );
         send(sd,buf,strlen(buf),0);
         usleep(5000);
         sprintf(buf,"%s","│======================================================================================================================================\n");
@@ -61,7 +61,15 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
         for(;i>=0;i--){
 
 	        arrayGetAt((LPC_ARRAY)boardFulllist,i, (LPDATA*)&TempBoard);
-            sprintf(buf, "│  [%2d ] ||%6d   || %6s    || %s\n",(cnt%10+1),i+1,TempBoard->id,TempBoard->title);
+            strcpy(buf,TempBoard->reply);
+            char* key = strtok(buf,"|");
+            int repleNum=0;
+            if(key==NULL){perror("reple read error!");}
+            while(key=strtok(NULL,"|")){
+                repleNum++;
+            }
+            
+            sprintf(buf, "│  [%2d ] ||%6d   || %6s    || %s[%d]\n",(cnt%10+1),i+1,TempBoard->id,TempBoard->title,repleNum);
             checkBox[cnt%10+1] = i;
             cnt++;
             send(sd,buf,strlen(buf),0);
@@ -92,7 +100,7 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
                         printf("%d\n",cnt);
                         sprintf(buf, "잘못고르셨습니다.");
                         send(sd,buf,strlen(buf),0);
-                        continue;
+                        goto M;
                     }
                     else if(choice<=10 &&choice>0){
                         ((LPBOARD)boardFulllist->lpData[checkBox[choice]])->request =1;
@@ -104,16 +112,16 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
                     else{
                         sprintf(buf, "잘못고르셨습니다.");
                         send(sd,buf,strlen(buf),0);
-                        continue;
+                        goto M;
                         }
                 }
                 send(sd, "clear!!", strlen("clear!!"), 0);
                 if(i!=0){
                     usleep(5000);
-                    sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            subject\n" );
+                    sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            title\n" );
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
-                    sprintf(buf,"%s","\n│======================================================================================================================================\n");
+                    sprintf(buf,"%s","│======================================================================================================================================\n");
                     send(sd,buf,strlen(buf),0);
                 }
                 
