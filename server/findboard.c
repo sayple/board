@@ -104,6 +104,7 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
                     if(cnt==checkTen) checkTen+=10;
                     else continue;
                 }
+                else if(i==0&&checkTen-10==cnt) goto M;
                 while(1){
                     int k=9-((cnt-1)%10);
                     strcpy(buf,""); //보낼 문자초기화

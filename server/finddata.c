@@ -58,6 +58,7 @@ int findData(int sd,LPARRAY userFullList,int* chatUser){
         int checkBox[11] ={0,};
         int Max=arraySize((LPC_ARRAY)dataFullList);
         int i;
+        int checkTen=10;
         for(i=0;i<Max;i++){
 	        arrayGetAt((LPC_ARRAY)dataFullList,i, (LPDATA*)&TempBoard);
             if(strstr(TempBoard->fileName,findWord)!=NULL){
@@ -77,6 +78,11 @@ int findData(int sd,LPARRAY userFullList,int* chatUser){
                 return 0;
             }
             if(cnt!=0 && (cnt%10==0 || i==Max-1)){
+                if(i!=Max-1){
+                        if(cnt==checkTen) checkTen+=10;
+                        else continue;
+                    }
+                else if(i==Max-1&&checkTen-10==cnt) goto A;
                 while(1){
                     int k=9-((cnt-1)%10);
                     strcpy(buf,""); //보낼 문자초기화
@@ -84,7 +90,7 @@ int findData(int sd,LPARRAY userFullList,int* chatUser){
                         strcat(buf,"\n");
                         k--;
                     }
-                    strcat(buf, "\n\n\n  어느 파일을 다운받으시겠습니까?(다음자료보기: 0  종료시: /e) : ");
+                    strcat(buf, "\n\n\n\n  어느 파일을 다운받으시겠습니까?(다음자료보기: 0  종료시: /e) : ");
                     usleep(5000);
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
