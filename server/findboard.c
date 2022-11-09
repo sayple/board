@@ -63,6 +63,7 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
         loadBoardList(&boardFulllist);
         usleep(5000);
         int cnt=0;
+        int checkTen=10;
         int checkBox[11] ={0,};
         if(arraySize((LPC_ARRAY)boardFulllist)==0){
             sprintf(buf,"│ 게시글이 없습니다.\n" );
@@ -99,6 +100,10 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
                 return 0;
             }
             if(cnt!=0 && (cnt%10==0 || i==0)){
+                if(i!=0){
+                    if(cnt==checkTen) checkTen+=10;
+                    else continue;
+                }
                 while(1){
                     int k=9-((cnt-1)%10);
                     strcpy(buf,""); //보낼 문자초기화
@@ -109,6 +114,7 @@ int findBoard(int sd,LPARRAY userFullList,int* chatUser){
                     strcat(buf, "\n\n\n\n  어느 게시글을 자세히 보고 싶으십니까?(다음글보기: 0  종료시: /e) : ");
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
+                    memset(buf,0,1024);
                     recv(sd,buf,1024,0);
                     if(strncmp(buf,"/e",2)==0){
                         usleep(5000);
