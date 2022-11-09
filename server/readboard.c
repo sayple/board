@@ -40,7 +40,7 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
         M:
         send(sd, "clear!!", strlen("clear!!"), 0);
         usleep(5000);
-        sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            title\n" );
+        sprintf(buf,"\n│ chocie ||  textNO ||    writer ||            title\n" );
         send(sd,buf,strlen(buf),0);
         usleep(5000);
         sprintf(buf,"%s","│======================================================================================================================================\n");
@@ -69,7 +69,7 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
                 repleNum++;
             }
             
-            sprintf(buf, "│  [%2d ] ||%6d   || %6s    || %s[%d]\n",(cnt%10+1),i+1,TempBoard->id,TempBoard->title,repleNum);
+            sprintf(buf, "│  [%2d ] ||%6d   || %9s || %s[%d]\n",(cnt%10+1),i+1,TempBoard->nick,TempBoard->title,repleNum);
             checkBox[cnt%10+1] = i;
             cnt++;
             send(sd,buf,strlen(buf),0);
@@ -118,7 +118,7 @@ int readBoard(int sd,LPARRAY userFullList,int* chatUser){
                 send(sd, "clear!!", strlen("clear!!"), 0);
                 if(i!=0){
                     usleep(5000);
-                    sprintf(buf,"\n│ chocie ||  textNO ||   writer  ||            title\n" );
+                    sprintf(buf,"\n│ chocie ||  textNO ||    writer ||            title\n" );
                     send(sd,buf,strlen(buf),0);
                     usleep(5000);
                     sprintf(buf,"%s","│======================================================================================================================================\n");

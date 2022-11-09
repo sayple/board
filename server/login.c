@@ -52,7 +52,7 @@ int login(int sd,LPARRAY userFullList,int* chatUser)
     LPUSER TempCheck;
     while(1){
         if(loginCount>=5){
-            sprintf(buf,"\n5회 이상 틀리셨습니다.\n");
+            sprintf(buf,"5회 이상 틀리셨습니다.\n");
             send(sd,buf,strlen(buf),0);
             sleep(1);
             break;

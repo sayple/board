@@ -258,8 +258,8 @@ void loadText(int sd,int originNumber,char* id,char* nickName, LPARRAY boardFull
     char timeWord[128];
     int i,n;
     char* key;
-    char buf[1024];
-    char buff[2248];
+    char buf[4096];
+    char buff[4231];
     int countRow;
     int deleteFlag = 0;
     int replyFlag =0;
@@ -307,7 +307,7 @@ void loadText(int sd,int originNumber,char* id,char* nickName, LPARRAY boardFull
                 key = strtok(buf,"|");
                 countRow++;
                 if(key==NULL) break;
-                sprintf(buff,"│----%s----\n",key);
+                sprintf(buff,"│ ──── %s ────\n",key);
                 send(sd,buff,strlen(buff),0);
                 while(key=strtok(NULL,"|")){
                     countRow++;
@@ -342,12 +342,17 @@ void loadText(int sd,int originNumber,char* id,char* nickName, LPARRAY boardFull
                     for(i=0;i<arraySize((LPC_ARRAY)boardFullList);i++){
 	                    arrayGetAt((LPC_ARRAY)boardFullList,i, (LPDATA*)&newTempReply);
                         if(newTempReply->originNum ==originNumber){
+                            if(strlen(newTempReply->reply)+strlen(buf)>=3900){
+                                send(sd,"게시글에 최대리플을 초과하였습니다.\n",strlen("게시글에 최대리플을 초과하였습니다.\n"),0);
+                                sleep(1);
+                                return;
+                            }
                             flagToRepl=1;
                             time(&now);
                             timeInfo = localtime(&now);
                             sprintf(timeWord,"%s",asctime(timeInfo));
                             timeWord[strlen(timeWord)-1]='\0';
-                            sprintf(buff, " %s : %s --%s|",nickName,buf,timeWord);
+                            sprintf(buff, " %s : %s - %s|",nickName,buf,timeWord);
                             strcat(newTempReply->reply,buff);
                             break;
                         }

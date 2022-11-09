@@ -12,6 +12,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <pthread.h>
+#include <ctype.h>
 #include "menu.h"
 #include "userinfo.h"
 #include "input.h"
@@ -32,6 +33,7 @@ int join(int sd,LPARRAY userFullList,int* chatUser)
     fflush(stdout);
     LPUSER TempCheck;
         while(1){
+            A:
             send(sd, "clear!!", strlen("clear!!"), 0);
             usleep(5000);
             int flag =1;
@@ -42,6 +44,14 @@ int join(int sd,LPARRAY userFullList,int* chatUser)
             if(n<16){
                 int i=0;
                 buf[n] = '\0';
+                for(int j=0;j<n-1;j++){
+                    if(isalnum(buf[j])==0){
+                        sprintf(buf,"│  %s","영문,숫자만 사용 가능합니다.\n");
+                        send(sd,buf,sizeof(buf),0);
+                        sleep(1);
+                        goto A;
+                    }
+                }
                 strcpy(Temp->id,buf);
                 for(i=0;i<arraySize(userFullList);i++){
 	                arrayGetAt(userFullList,i, (LPDATA*)&TempCheck);
@@ -76,13 +86,14 @@ int join(int sd,LPARRAY userFullList,int* chatUser)
         }
         buf[n] = '\0';
 	    strcpy(Temp->pass,buf);
+        B:
         while(1){
             memset(buf,0,sizeof(char)*1024);
             sprintf(buf,"%s", "│  NICK  : ");
 	        send(sd, buf, strlen(buf), 0);
             usleep(50000);
             n = recv(sd, buf, sizeof(buf), 0);
-            if(n<16) break;
+            if(n<16){break;}
             else{
                 sprintf(buf,"│  %s","닉네임 기준을 초과하셨습니다. 다시 입력하십시요.\n");
                 send(sd,buf,sizeof(buf),0);
@@ -90,6 +101,14 @@ int join(int sd,LPARRAY userFullList,int* chatUser)
             }
         }
 	    buf[n] = '\0';
+        for(int j=0;j<n-1;j++){
+            if(isalnum(buf[j])==0){
+                sprintf(buf,"│  %s","영문,숫자만 사용 가능합니다.\n");
+                send(sd,buf,sizeof(buf),0);
+                sleep(1);
+                goto B;
+            }
+        }
 	    strcpy(Temp->name,buf);
         while(1){
             sprintf(buf,"│  %s", "PHONE Number(xxx-xxxx-xxxx)  : ");

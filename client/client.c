@@ -93,7 +93,7 @@ void* reader_thread(void *arg){
 	while(1){
 		n = recv(sock, buffer, 1024, 0);
 		if(n <= 0){
-			printf("\n서버 연결 끊김\n");
+			printf("\n서버 연결 해제\n");
 			break;
 		}
 		buffer[n] = '\0';
