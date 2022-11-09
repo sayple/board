@@ -16,7 +16,7 @@
 #include "menu.h"
 #include "total.h"
 #include "userinfo.h"
-#define CHATMEM 30
+#define CHATMEM 31
 typedef struct{
     char nick[16];
     int sd;
@@ -101,6 +101,13 @@ int chatting(int sd,LPARRAY userFullList,int* chatUser){
     int n=0;
     while(chatUser[n]!=-1){
         n++;
+    }
+    if(n>=CHATMEM-1){
+        send(sd,"최대 인원 초과로 접속이 불가능하십니다.",strlen("최대 인원 초과로 접속이 불가능하십니다."),0);
+        sleep(1);
+        free(userChatting);
+        send(sd, "clear!!", strlen("clear!!"), 0);
+        return 0;
     }
     chatUser[n] = sd;
     userChatting->chatMem=chatUser;

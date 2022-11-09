@@ -18,10 +18,9 @@
 #include "array.h"
 #include "load.h"
 #include "total.h"
-//#include "member.h"
 
 #define BACKLOG 1024
-#define CHATMEMBER 30
+#define CHATMEMBER 31
 typedef struct{
 	int sd;
 	int* arrayInt;

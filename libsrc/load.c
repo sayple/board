@@ -182,7 +182,7 @@ int saveBoardList(LPBOARD temp,LPARRAY boardFullList){
     LPBOARD newTemp;
     arrayAdd(boardFullList,(LPDATA)temp);
     FILE* fp;
-    char buff[2800];
+    char buff[4980];
     fp = fopen("board_contents.txt","w");
     for(int i=0;i<arraySize(boardFullList);i++){
         arrayGetAt(boardFullList,i,(LPDATA*)&newTemp);
@@ -202,7 +202,7 @@ int saveBoard(LPARRAY boardFullList){
     pthread_mutex_lock(&mutexid);
     LPBOARD newTemp;
     FILE* fp;
-    char buff[2800];
+    char buff[4980];
     fp = fopen("board_contents.txt","w");
     
     for(int i=0;i<arraySize(boardFullList);i++){
@@ -253,10 +253,13 @@ char* loadName(LPARRAY userFullList){
     }
 }
 void loadText(int sd,int originNumber,char* id,char* nickName, LPARRAY boardFullList){
+    time_t now;
+    struct tm* timeInfo;
+    char timeWord[128];
     int i,n;
     char* key;
     char buf[1024];
-    char buff[2048];
+    char buff[2248];
     int countRow;
     int deleteFlag = 0;
     int replyFlag =0;
@@ -340,7 +343,11 @@ void loadText(int sd,int originNumber,char* id,char* nickName, LPARRAY boardFull
 	                    arrayGetAt((LPC_ARRAY)boardFullList,i, (LPDATA*)&newTempReply);
                         if(newTempReply->originNum ==originNumber){
                             flagToRepl=1;
-                            sprintf(buff, " %s : %s|",nickName,buf);
+                            time(&now);
+                            timeInfo = localtime(&now);
+                            sprintf(timeWord,"%s",asctime(timeInfo));
+                            timeWord[strlen(timeWord)-1]='\0';
+                            sprintf(buff, " %s : %s --%s|",nickName,buf,timeWord);
                             strcat(newTempReply->reply,buff);
                             break;
                         }
